@@ -76,11 +76,6 @@ function nextURL(html) {
     return nextPageURL
 }
 
-var MovieSpider = new EventEmitter()
-MovieSpider.on('next', function(url) {
-    load(url)
-})
-
 function load(url) {
     var request = https.get(url, function(res) {
         var html = ''
@@ -96,13 +91,13 @@ function load(url) {
                 saveMovieObject(movies)
                 downloadMoviePoster(movies)
             } else {
-                MovieSpider.emit('next', nextPageURL)
+                load(nextPageURL)
             }
         })
     })
 
-    request.on('error', function() {
-        console.log('获取数据出错!');
+    request.on('error', function(error) {
+        console.log('获取数据出错!' + error.stack + '\n' + 'error message ' + error.messages);
     })
 }
 
